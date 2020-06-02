@@ -23,9 +23,9 @@ class Graphic:
     def __init__(self, components, label: str = None,
                  x=0, y=0, fixedWidth=False):
         self.components = components
+        self.axes = None
         self.label = None
 
-        self.axes = None
         self.x = x
         self.y = y
         self.useAutoScale = not fixedWidth
@@ -196,6 +196,65 @@ class MatplotlibGraphic(Graphic):
         xScale, yScale = self.axes.viewLim.bounds[2:]
 
         return xScale, yScale
+
+class Component:
+    def __init__(x:float, y:float, label = ""):
+        self.x = x
+        self.y = y
+        self.label = ""
+        self.dx = 0
+        self.color = None
+
+    @property
+    def width(self):
+        raise NotImplemented("Subclass must implement")
+
+    @property
+    def height(self):
+        raise NotImplemented("Subclass must implement")
+
+    @property
+    def centroid(self):
+        return self.x + self.width/2, self.y + self.height/2 
+
+    @property
+    def boundingBox(self):
+        return x, y, x+width, y+height
+
+    def render(self):
+        raise NotImplemented("Subclass must implement")
+
+    def translate(self, dx: float):
+        """Translate the label in the x-axis by a small amount 'dx'.
+
+        The offset is stackable and can be removed with the method resetPosition().
+        Used by the FigureManager to solve overlapping issues with the labels.
+        """
+
+        x, y = self.position
+        self.position = (x + dx, y)
+        self.dx += dx
+
+    def resetPosition(self):
+        """Remove the effect of previous translations."""
+        x, y = self.position
+        self.position = (x - self.dx, y)
+        self.dx = 0.0
+
+# class Group(Component):
+#     def __init__(self, components, x:float, y:float, label = ""):
+#         self.components = components
+#         super(Group, self).__init__(x=x, y=y, label = label)
+
+
+# class Surface(Component):
+#     def __init__(self, R, diameter, x=0.0):
+#         self.R = R
+#         self.diameter = diameter
+
+
+# class SurfacePair(Component):
+#     def __init__(self, R1, R2, diameter, spacing):
 
 
 class SurfacePairPatch(patches.PathPatch):
