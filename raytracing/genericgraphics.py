@@ -6,7 +6,7 @@ from typing import List
 import numpy as np
 import math
 
-class Component:
+class Graphics:
     def __init__(x:float, y:float, label = ""):
         self.x = x
         self.y = y
@@ -23,10 +23,13 @@ class Component:
         raise NotImplemented("Subclass must return height as drawn in data space")
 
     def patch(self, axes):
-        raise NotImplemented("Subclass must return a matplotlib patch")
+        raise NotImplemented("Subclass must return a matplotlib patch in data space")
 
     def tinker(self):
         raise NotImplemented("Subclass must return a Tinker drawing command")
+
+    def bitmap(self, bitmap):
+        raise NotImplemented("Subclass must return a bitmap")
 
     @property
     def centroid(self):
@@ -51,7 +54,7 @@ class Component:
         self.x -= dx
         self.dx = 0
 
-class Surface(Component):
+class Surface(Graphics):
     def __init__(self, R, diameter, x, y, label=""):
         self.R = R
         self.halfHeight = diameter / 2
@@ -80,7 +83,7 @@ class Surface(Component):
                                  color=[0.85, 0.95, 0.95],
                                  fill=True)
     
-class SurfacePair(Component):
+class SurfacePair(Graphics):
     def __init__(self, surfaceA, surfaceB, dx, label=""):
         self.dx = dx
         self.surfaceA = surfaceA
@@ -94,7 +97,7 @@ class SurfacePair(Component):
         return patches.PatchCollection([self.surfaceA.patch(),self.surfaceB.patch()])
 
 
-class Label(Component):
+class Label(Graphics):
     def __init__(self, text: str, x, y, size='small'):
         self.size = size
         super(LabelPatch, self).__init__(x=x, y=y, label=text)
@@ -103,20 +106,25 @@ class Label(Component):
         fontsize = 8
         if size == 'small':
             fontsize = 8
+        elif size == 'medium':
+            fontsize = 16
+        elif size == 'large':
+            fontsize = 32
 
         return mplText.Text(x=self.x, y=self.y, text=self.label, fontsize=fontsize, horizontalalignment='center')
 
 
-class Aperture(Component):
+class Aperture(Graphics):
     def __init__(self, x, y, width=0,label=""):
         self.width = width
         super(Aperture, self).__init__(x=x, y=y, label=label)
 
     def patch(self):
-        if self.width <= 0.01:
-            coords = [[self.x - 0.01 / 2, self.y], [self.x + 0.01 / 2, self.y]]
-        else:
-            coords = [[self.x, self.y], [self.x + width, self.y]]
+        width = self.width
+        if width <= 0.01:
+            width = 0.01
+
+        coords = [[self.x, self.y], [self.x + width, self.y]]
         return patches.Polygon(coords,
                             linewidth=3,
                             closed=False,
