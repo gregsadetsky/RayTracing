@@ -14,6 +14,13 @@ class Graphics:
         self.dx = 0
         self.color = None
 
+    @staticmethod
+    def forElement(self, element):
+        if isinstance(element, Space):
+            return Graphics() # FIXME
+        elif isinstance(element, Lens):
+            return Graphics() # FIXME
+
     @property
     def width(self):
         raise NotImplemented("Subclass must return width as drawn in data space")
