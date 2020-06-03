@@ -90,6 +90,7 @@ class SurfacePair(Component):
         super(SurfacePair, self).__init__(x=surfaceA.x, y=surfaceA.y,label )
 
     def patch(self, axes):
+        # FIXME: Line between surfaces
         return patches.PatchCollection([self.surfaceA.patch(),self.surfaceB.patch()])
 
 
@@ -107,15 +108,16 @@ class Label(Component):
 
 
 class Aperture(Component):
-    def __init__(self, x, y, width=None, color='0.7'):
-        if width <= 0.01:
-            coords = [[x - 0.01 / 2, y], [x + 0.01 / 2, y]]
-        else:
-            coords = [[x, y], [x + width, y]]
-        super(AperturePatch, self).__init__(coords,
-                                            linewidth=3,
-                                            closed=False,
-                                            color=color)
+    def __init__(self, x, y, width=0,label=""):
+        self.width = width
+        super(Aperture, self).__init__(x=x, y=y, label=label)
 
     def patch(self):
-        return patches.PatchCollection([self.surfaceA.patch(),self.surfaceB.patch()])
+        if self.width <= 0.01:
+            coords = [[self.x - 0.01 / 2, self.y], [self.x + 0.01 / 2, self.y]]
+        else:
+            coords = [[self.x, self.y], [self.x + width, self.y]]
+        return patches.Polygon(coords,
+                            linewidth=3,
+                            closed=False,
+                            color=color)
