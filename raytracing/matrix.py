@@ -1576,14 +1576,14 @@ class Space(Matrix):
                                     apertureDiameter=diameter,
                                     label=label)
 
-    def transferMatrix(self, upTo=float('+Inf')):
+    def transferMatrix(self, upTo:float=float('+Inf')):
         """ Returns a Matrix() corresponding to a partial propagation
         if the requested distance is smaller than the length of this element
 
         Parameters
         ----------
         upTo : float
-            The length of the propagation (default=Inf)
+            The length of the propagation (default=Inf). Must be positive.
 
         Returns
         -------
@@ -1591,6 +1591,9 @@ class Space(Matrix):
             the corresponding matrix to the propagation
 
         """
+        if upTo < 0:
+            raise ValueError("'upTo' must be positive.")
+
         distance = upTo
         if distance < self.L:
             return Space(distance, self.frontIndex)
