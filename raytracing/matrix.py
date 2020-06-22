@@ -1576,7 +1576,7 @@ class Space(Matrix):
                                     apertureDiameter=diameter,
                                     label=label)
 
-    def transferMatrix(self, upTo:float=float('+Inf')):
+    def transferMatrix(self, upTo: float = float('+Inf')):
         """ Returns a Matrix() corresponding to a partial propagation
         if the requested distance is smaller than the length of this element
 
@@ -1698,10 +1698,14 @@ class ThickLens(Matrix):
     A biconvex lens has R1 > 0 and R2 < 0.
     """
 
-    def __init__(self, n, R1, R2, thickness, diameter=float('+Inf'), label=''):
+    def __init__(self, n: float, R1: float, R2: float, thickness: float, diameter: float = float('+Inf'),
+                 label: str = ''):
         self.R1 = R1
         self.R2 = R2
         self.n = n
+
+        if thickness < 0:
+            raise ValueError("Cannot create a ThickLens with negative thickness.")
 
         t = thickness
 
@@ -1746,7 +1750,7 @@ class ThickLens(Matrix):
         Parameters
         ----------
         upTo : float
-            The length of the propagation (default=Inf)
+            The length of the propagation (default=Inf). Must be positive.
 
         Returns
         -------
@@ -1754,6 +1758,9 @@ class ThickLens(Matrix):
             the corresponding matrix to the propagation
 
         """
+        if upTo < 0:
+            raise ValueError("'upTo' must be positive.")
+
         if self.L <= upTo:
             return self
         else:
