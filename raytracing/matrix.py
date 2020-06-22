@@ -106,12 +106,12 @@ class Matrix(object):
             C: float = 0,
             D: float = 1,
             physicalLength: float = 0,
-            frontVertex=None,
-            backVertex=None,
-            frontIndex=1.0,
-            backIndex=1.0,
-            apertureDiameter=float('+Inf'),
-            label=''
+            frontVertex: float = None,
+            backVertex: float = None,
+            frontIndex: float = 1.0,
+            backIndex: float = 1.0,
+            apertureDiameter: float = float('+Inf'),
+            label: str = ''
     ):
         # Ray matrix formalism
         self.A = float(A)
