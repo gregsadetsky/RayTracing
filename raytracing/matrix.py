@@ -120,6 +120,7 @@ class Matrix(object):
         self.D = float(D)
 
         # Length of this element
+        # FIXME check if negative, but messes with some code parts where we create a Space with negative d...
         self.L = float(physicalLength)
         # Aperture
         if apertureDiameter <= 0:
@@ -131,6 +132,8 @@ class Matrix(object):
         self.backVertex = backVertex
 
         # Index of refraction at entrance and exit.
+        if frontIndex < 1 or backIndex < 1:
+            raise ValueError("The index of refraction must be greater or equal to 1.")
         self.frontIndex = frontIndex
         self.backIndex = backIndex
 
@@ -296,7 +299,7 @@ class Matrix(object):
 
         return Matrix(a, b, c, d, frontVertex=fv, backVertex=bv, physicalLength=L, frontIndex=fIndex, backIndex=bIndex)
 
-    def mul_ray(self, rightSideRay):
+    def mul_ray(self, rightSideRay: Ray):
         r"""This function does the multiplication of a ray by a matrix.
         The output shows the propagated ray through the system.
         New position of ray is updated by the physical length of the matrix.
@@ -373,7 +376,7 @@ class Matrix(object):
 
         return outputRay
 
-    def mul_beam(self, rightSideBeam):
+    def mul_beam(self, rightSideBeam: GaussianBeam):
         """This function calculates the multiplication of a coherent beam with complex radius
         of curvature q by an ABCD matrix.
 
