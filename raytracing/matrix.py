@@ -277,6 +277,8 @@ class Matrix(object):
         # back vertex of the rightSideMatrix (which may or may not exist).
         # Vertices are measured with respect to the front edge of the
         # combined element.
+        if not isinstance(rightSideMatrix, Matrix):
+            raise TypeError("This method is used solely for the product of two Matrix objects.")
 
         fv = rightSideMatrix.frontVertex
         if fv is None and self.frontVertex is not None:
@@ -358,6 +360,8 @@ class Matrix(object):
         If the ray is beyond the aperture diameter it is labelled
         as "isBlocked = True" but the propagation can still be calculated.
         """
+        if not isinstance(rightSideRay, Ray):
+            raise TypeError("This method is used solely for the product of a Matirx object and a Ray object.")
 
         outputRay = Ray()
 
@@ -409,6 +413,9 @@ class Matrix(object):
         raytracing.Matrix.mul_ray
         raytracing.GaussianBeam
         """
+        if not isinstance(rightSideBeam, GaussianBeam):
+            raise TypeError("This method is used solely for the product of a Matrix object and a GaussianBeam object.")
+
         q = rightSideBeam.q
         if rightSideBeam.n != self.frontIndex:
             msg = "The gaussian beam is not tracking the index of refraction properly {0} {1}".format(
@@ -553,6 +560,8 @@ class Matrix(object):
         -----
         To use this function, the physicalLength of the system should be zero.
         """
+        if z < 0:
+            raise ValueError("The propagation length 'z' must be positive.")
 
         matrix = self.transferMatrix(upTo=z)
 
@@ -612,6 +621,9 @@ class Matrix(object):
         If you only care about the final ray that has propagated through, use 
         `traceThrough()`
         """
+        if not isinstance(ray, (Ray, GaussianBeam)):
+            raise TypeError(f"Cannot trace '{ray}' of type '{type(ray)}'. Only Ray objects or GaussianBeam objects are"
+                            f"supported.")
 
         rayTrace = []
         if isinstance(ray, Ray):
@@ -619,7 +631,6 @@ class Matrix(object):
                 if abs(ray.y) > self.apertureDiameter / 2:
                     ray.isBlocked = True
                 rayTrace.append(ray)
-
         rayTrace.append(self * ray)
 
         return rayTrace
@@ -719,6 +730,9 @@ class Matrix(object):
         raytracing.Matrix.traceThrough
         raytracing.Matrix.traceManyThrough
         """
+        if not isinstance(inputRays, collections.Iterable):
+            raise TypeError("'inputRays' argument is not iterable.")
+
         manyRayTraces = []
         for inputRay in inputRays:
             rayTrace = self.trace(inputRay)
@@ -772,9 +786,7 @@ class Matrix(object):
         Rays() as an output even if they passed a list of rays as inputs.
         """
 
-        try:
-            iter(inputRays)
-        except TypeError:
+        if not isinstance(inputRays, collections.Iterable):
             raise TypeError("'inputRays' argument is not iterable.")
 
         if not isinstance(inputRays, Rays):
@@ -829,6 +841,8 @@ class Matrix(object):
         We explicitly generate the list before the computation, then we split
         the array in #processes different lists.
         """
+        if not isinstance(inputRays, collections.Iterable):
+            raise TypeError("'inputRays' argument is not iterable.")
 
         if processes is None:
             processes = multiprocessing.cpu_count()
@@ -1542,7 +1556,7 @@ class Space(Matrix):
     d : float
         the length of the free space
     n : float
-        The refraction index of the space. This value cannot be negative. (default=1)
+        The refraction index of the space. This value cannot be less than 1. (default=1)
     diameter : float
         The diameter of the free space (default=Inf)
     label : string
@@ -1666,7 +1680,7 @@ class ThickLens(Matrix):
     Parameters
     ----------
     n : float
-        The refraction index of the thick lens. This value cannot be negative.
+        The refraction index of the thick lens. This value cannot be less than 1.
     R1 : float
         The first radius of thick lens
     R2 : float
@@ -1799,7 +1813,7 @@ class DielectricSlab(ThickLens):
     Parameters
     ----------
     n : float
-        The refraction index of the dielectric. This value cannot be negative
+        The refraction index of the dielectric. This value cannot be than 1.0
     thickness : float
         The thickness of the dielectric. This value cannot be negative.
     diameter : float
