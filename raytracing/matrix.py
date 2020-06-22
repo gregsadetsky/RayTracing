@@ -450,7 +450,7 @@ class Matrix(object):
         """
         return self.apertureDiameter != float("+Inf")
 
-    def transferMatrix(self, upTo=float('+Inf')):
+    def transferMatrix(self, upTo: float = float('+Inf')):
         r""" The Matrix() that corresponds to propagation from the edge
         of the element (z=0) up to distance "upTo" (z=upTo). If no parameter is
         provided, the transfer matrix will be from the front edge to the back edge.
@@ -460,7 +460,7 @@ class Matrix(object):
         Parameters
         ----------
         upTo : float
-            A distance that shows the propagation length (default=Inf)
+            A distance that shows the propagation length (default=Inf). Must be positive.
 
         Returns
         -------
@@ -490,6 +490,8 @@ class Matrix(object):
         -----
         The upTo parameter should have a value greater than the physical distance of the system.
         """
+        if upTo < 0:
+            raise ValueError("'upTo' must be positive.")
 
         distance = upTo
         if self.L == 0:
