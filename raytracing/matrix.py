@@ -1801,7 +1801,7 @@ class DielectricSlab(ThickLens):
     n : float
         The refraction index of the dielectric. This value cannot be negative
     thickness : float
-        The thickness of the dielectric
+        The thickness of the dielectric. This value cannot be negative.
     diameter : float
         The diameter of the dielectric. (default=Inf)
     label : string
@@ -1822,21 +1822,23 @@ class DielectricSlab(ThickLens):
     f = +inf (afocal)
     """
 
-    def __init__(self, n, thickness, diameter=float('+Inf'), label=''):
+    def __init__(self, n: float, thickness: float, diameter: float = float('+Inf'), label: str = ''):
+        if thickness < 0:
+            raise ValueError("Cannot create a DielectricSlab with a negative thickness.")
         super(DielectricSlab, self).__init__(n=n, R1=float("+Inf"),
                                              R2=float("+Inf"),
                                              thickness=thickness,
                                              diameter=diameter,
                                              label=label)
 
-    def transferMatrix(self, upTo=float('+Inf')):
+    def transferMatrix(self, upTo: float = float('+Inf')):
         """ Returns a either DielectricSlab() or a Matrix() corresponding to a partial propagation
                 if the requested distance is smaller than the length of this element
 
         Parameters
         ----------
         upTo : float
-            The length of the propagation (default=Inf)
+            The length of the propagation (default=Inf). Must be positive.
 
         Returns
         -------
@@ -1844,6 +1846,9 @@ class DielectricSlab(ThickLens):
             the corresponding matrix to the propagation
 
         """
+        if upTo < 0:
+            raise ValueError("'upTo' must be positive.")
+
         if self.L <= upTo:
             return self
         else:
