@@ -1,3 +1,6 @@
+from math import pi
+
+
 class Ray:
     """A vector and a light ray as transformed by ABCD matrices.
 
@@ -32,9 +35,9 @@ class Ray:
 
     """
 
-    def __init__(self, y: float = 0, theta: float = 0, z: float = 0, isBlocked:bool = False):
+    def __init__(self, y: float = 0, theta: float = 0, z: float = 0, isBlocked: bool = False):
         self.y = y
-        self.theta = theta
+        self.theta = theta % (2 * pi)  # For better readability, angle range [0, 2pi[
 
         self.z = z
         self.isBlocked = isBlocked
@@ -135,7 +138,7 @@ class Ray:
         raytracing.Matrix.traceMany().
 
         """
-        
+
         if N >= 2:
             deltaRadian = float(radianMax - radianMin) / (N - 1)
         elif N == 1:
