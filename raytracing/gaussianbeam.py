@@ -35,6 +35,11 @@ class GaussianBeam(object):
     def __init__(self, q: complex = None, w: float = None, R: float = float("+Inf"), n: float = 1.0,
                  wavelength=632.8e-6, z=0):
         # Gaussian beam matrix formalism
+        if n < 1:
+            raise ValueError("The index of refraction must be at least 1.")
+        if wavelength < 0:
+            raise ValueError("A gaussian beam cannot have a negative wavelength.")
+        
         relTol = 0.5 / 100
         if q is not None:
             self.q = q
