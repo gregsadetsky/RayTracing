@@ -78,7 +78,7 @@ class MatrixGroup(Matrix):
                     matrix.frontIndex = lastElement.backIndex
                     matrix.backIndex = matrix.frontIndex
                 else:
-                    msg = "Mismatch of indices between last element and appended element"
+                    msg = "Mismatch of indices between last element and appended element."
                     raise ValueError(msg)
 
         self.elements.append(matrix)
@@ -278,7 +278,7 @@ class MatrixGroup(Matrix):
         Parameters
         ----------
         upTo : float
-            The axial distance from the front edge of the first element (default=+Inf)
+            The axial distance from the front edge of the first element. Must be positive. (default=+Inf)
 
         Returns
         -------
@@ -315,6 +315,8 @@ class MatrixGroup(Matrix):
         ray formalism.  To find out if a ray has been blocked, you must
         use trace().
         """
+        if upTo < 0:
+            raise ValueError("'upTo' must be positive.")
         transferMatrix = Matrix(A=1, B=0, C=0, D=1)
         distance = upTo
         for element in self.elements:
