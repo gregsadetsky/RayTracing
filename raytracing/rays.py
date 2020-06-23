@@ -178,6 +178,7 @@ class Rays:
         raytracing.rays.rayAnglesHistogram
         """
 
+
         if binCount is None:
             binCount = 40
 
@@ -186,6 +187,11 @@ class Rays:
 
         if maxValue is None:
             maxValue = max(self.yValues)
+
+        if minValue > maxValue:
+            temp = minValue
+            minValue = maxValue
+            maxValue = temp
 
         if self._countHistogramParameters != (binCount, minValue, maxValue):
             self._countHistogramParameters = (binCount, minValue, maxValue)
@@ -267,6 +273,11 @@ class Rays:
 
         if maxValue is None:
             maxValue = max(self.thetaValues)
+
+        if minValue > maxValue:
+            temp = minValue
+            minValue = maxValue
+            maxValue = temp
 
         if self._anglesHistogramParameters != (binCount, minValue, maxValue):
             self._anglesHistogramParameters = (binCount, minValue, maxValue)
