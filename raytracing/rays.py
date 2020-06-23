@@ -9,7 +9,6 @@ import warnings
 
 
 class Rays:
-
     """A source or a detector of rays
 
     We can obtain intensity distributions at from given plane by propagating
@@ -177,7 +176,6 @@ class Rays:
         --------
         raytracing.rays.rayAnglesHistogram
         """
-
 
         if binCount is None:
             binCount = 40
@@ -492,9 +490,9 @@ class UniformRays(Rays):
         Minimum angle for the rays (default=None)
         If no value is assigned to this parameter it will be -thetaMax
     M : int
-        Number of points that are defined for the height of rays
+        Number of points that are defined for the height of rays. Must be at least 1. (default=100)
     N : int
-        Number of rays for each point
+        Number of rays for each point. Must be at least 1. (default=100)
 
     Examples
     --------
@@ -522,6 +520,11 @@ class UniformRays(Rays):
     """
 
     def __init__(self, yMax=1.0, yMin=None, thetaMax=pi / 2, thetaMin=None, M=100, N=100):
+        if M < 1:
+            raise ValueError("The number of height values 'M' must be 1 or more.")
+        if N < 1:
+            raise ValueError("The number of angle values 'N' must be 1 or more.")
+
         self.yMax = yMax
         self.yMin = yMin
         if self.yMin is None:
@@ -553,9 +556,9 @@ class LambertianRays(Rays):
     M : int
         Number of points that are defined for the height of rays
     N : int
-        Number of rays for each point
-    I : int
         Number of points that are defined for the angle of rays
+    I : int
+        FIXME: What is a good way to descibe this parameter?
 
     Examples
     --------
@@ -578,8 +581,14 @@ class LambertianRays(Rays):
     raytracing.UniformRays
     """
 
-
     def __init__(self, yMax=1.0, yMin=None, M=100, N=100, I=100):
+        if M < 1:
+            raise ValueError("The number of height values 'M' must be 1 or more.")
+        if N < 1:
+            raise ValueError("The number of angle values 'N' must be 1 or more.")
+        if I < 1:
+            raise ValueError("The coefficient of intensity 'I' must be 1 or more.")  # FIXME: coefficient of intensity?
+
         self.yMax = yMax
         self.yMin = yMin
         if yMin is None:
@@ -624,7 +633,11 @@ class RandomRays(Rays):
     raytracing.RandomUniformRays
 
     """
+
     def __init__(self, yMax=1.0, yMin=None, thetaMax=pi / 2, thetaMin=None, maxCount=100000):
+        if maxCount < 1:
+            ValueError("There must be at least a maximum count of 1 Ray().")
+            
         self.maxCount = maxCount
         self.yMax = yMax
         self.yMin = yMin
@@ -640,6 +653,9 @@ class RandomRays(Rays):
         return self.maxCount
 
     def __getitem__(self, item):
+        if not isinstance(item, int):
+            raise TypeError("Only integer index supported.")
+
         if item < 0:
             # Convert negative index to positive (i.e. -1 == len - 1)
             item += self.maxCount
