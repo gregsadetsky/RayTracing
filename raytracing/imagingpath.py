@@ -676,17 +676,6 @@ class ImagingPath(MatrixGroup):
 
             (ray1, dummy) = self.marginalRays()
 
-
-        # if ray1 is None:
-        #     (apertureStopPosition, apertureStopDiameter) = self.apertureStop()
-        #     if apertureStopPosition is None:
-        #         ray1 = Ray()
-        #         #ray1.theta = maxAngle # How to set the maximal angle without axial ray?
-        #         ray1.y = 0
-        #         #raise ValueError("There is no aperture stop in this ImagingPath and therefore no marginal ray")
-        #     else:
-        #         (ray1, dummy) = self.marginalRays()
-
         if ray2 is None:
             (fieldStopPosition, fieldStopDiameter) = self.fieldStop()
             if fieldStopPosition is None:
