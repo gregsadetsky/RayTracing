@@ -80,14 +80,26 @@ class AchromatDoubletLens(MatrixGroup):
         self.R1 = R1
         self.R2 = R2
         self.R3 = R3
+        if tc1 < 0:
+            raise ValueError("The first center thickness must be positive")
         self.tc1 = tc1
+        if tc2 < 0:
+            raise ValueError("The second center thickness must be positive.")
         self.tc2 = tc2
+        if te < 0:
+            raise ValueError("The edge thickness must be positive.")
         self.te = te
+        if n1 < 1:
+            raise ValueError("The index of refraction of the first material must be at least 1.")
         self.n1 = n1
+        if n2 < 1:
+            raise ValueError("The index of refraction of the second material must be at least 1.")
         self.n2 = n2
         self.mat1 = mat1
         self.mat2 = mat2
         self.url = url
+        if wavelengthRef is not None and wavelengthRef < 0:
+            raise ValueError("Cannot create a lens with a negative defined wavelength.")
 
         elements = []
         elements.append(DielectricInterface(n1=1, n2=n1, R=R1, diameter=diameter))
@@ -187,11 +199,17 @@ class SingletLens(MatrixGroup):
         self.fb = fb
         self.R1 = R1
         self.R2 = R2
+        if tc < 0:
+            raise ValueError("The first center thickness must be positive")
         self.tc = tc
+        if te < 0:
+            raise ValueError("The edge thickness must be positive.")
         self.te = te
         self.n = n
         self.mat = mat
         self.url = url
+        if wavelengthRef is not None and wavelengthRef < 0:
+            raise ValueError("Cannot create a lens with a negative defined wavelength.")
 
         elements = []
         elements.append(DielectricInterface(n1=1, n2=n, R=R1, diameter=diameter))
@@ -242,7 +260,6 @@ class SingletLens(MatrixGroup):
 
 
 class Objective(MatrixGroup):
-
     """
     Parameters
     ----------
@@ -279,6 +296,8 @@ class Objective(MatrixGroup):
         """
 
         self.f = f
+        if NA < 0:
+            raise ValueError("The numerical aperture NA must be positive.")
         self.NA = NA
         self.focusToFocusLength = focusToFocusLength
         self.backAperture = backAperture
