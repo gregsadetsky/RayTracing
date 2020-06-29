@@ -636,8 +636,8 @@ class RandomRays(Rays):
 
     def __init__(self, yMax=1.0, yMin=None, thetaMax=pi / 2, thetaMin=None, maxCount=100000):
         if maxCount < 1:
-            ValueError("There must be at least a maximum count of 1 Ray().")
-            
+            ValueError("There must be at least a maximum count of 1 ray.")
+
         self.maxCount = maxCount
         self.yMax = yMax
         self.yMin = yMin
@@ -780,7 +780,7 @@ class RandomLambertianRays(RandomRays):
                                                    maxCount=maxCount)
 
     def randomRay(self) -> Ray:
-        if len(self._rays) == self.maxCount:
+        if len(self._rays) >= self.maxCount:
             raise AttributeError("Cannot generate more random rays, maximum count achieved")
 
         theta = 0
