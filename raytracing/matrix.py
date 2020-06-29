@@ -260,6 +260,9 @@ class Matrix(object):
         any apertures are lost.
         """
 
+        if not isinstance(rightSideMatrix, Matrix):
+            raise TypeError("This method is used solely for the product of two Matrix objects.")
+
         a = self.A * rightSideMatrix.A + self.B * rightSideMatrix.C
         b = self.A * rightSideMatrix.B + self.B * rightSideMatrix.D
         c = self.C * rightSideMatrix.A + self.D * rightSideMatrix.C
@@ -277,8 +280,6 @@ class Matrix(object):
         # back vertex of the rightSideMatrix (which may or may not exist).
         # Vertices are measured with respect to the front edge of the
         # combined element.
-        if not isinstance(rightSideMatrix, Matrix):
-            raise TypeError("This method is used solely for the product of two Matrix objects.")
 
         fv = rightSideMatrix.frontVertex
         if fv is None and self.frontVertex is not None:
@@ -747,6 +748,8 @@ class Matrix(object):
         the Rays() object is an iterator and can be used like a list of rays.
         UniformRays, LambertianRays() etc... can be used.
 
+        This method cannot be used with GaussianBeams objects.
+
         Parameters
         ----------
         inputRays : object of Ray class
@@ -816,6 +819,8 @@ class Matrix(object):
         if you create 8 processes on 8 CPU cores, you gain a factor of 
         approximately 8 in speed. We are not talking GPU acceleration, but
         still: 1 minute is shorter than 8 minutes.
+
+        This method cannot be used with GaussianBeams objects.
 
         Parameters
         ----------
