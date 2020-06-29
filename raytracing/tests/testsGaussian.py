@@ -26,6 +26,16 @@ class TestBeam(envtest.RaytracingTestCase):
         with self.assertRaises(ValueError):
             GaussianBeam(q, w)
 
+    def testBeamInvalidIndexOfRefraction(self):
+        n = 0.9999999999
+        with self.assertRaises(ValueError):
+            GaussianBeam(1, n=n)
+
+    def testBeamInvalidWavelength(self):
+        wavelength = -632e-9
+        with self.assertRaises(ValueError):
+            GaussianBeam(1, wavelength=wavelength)
+
     def testIsInFinite(self):
         beam = GaussianBeam(w=inf, R=2)
         self.assertFalse(beam.isFinite)
