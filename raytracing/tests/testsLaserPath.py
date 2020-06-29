@@ -3,6 +3,7 @@ from raytracing import *
 
 inf = float("+inf")
 
+
 class TestLaserPath(envtest.RaytracingTestCase):
 
     def testLaserPathNoElements(self):
@@ -36,7 +37,6 @@ class TestLaserPath(envtest.RaytracingTestCase):
 
 class TestLaserCavity(envtest.RaytracingTestCase):
 
-
     def testEigenModesNoPower(self):
         lp = LaserCavity([Space(10)])
         self.assertTupleEqual(lp.eigenModes(), (None, None))
@@ -68,13 +68,13 @@ class TestLaserCavity(envtest.RaytracingTestCase):
         self.assertAlmostEqual(beam.q.imag, 5 * 3 ** 0.5)
 
     def testLaserModesOneModeQ2isNone(self):
-        elements = [Space(1, 1.33), DielectricInterface(1.33, 1, 1), ThickLens(1.33, -10, -5, -20)]
+        elements = [Space(5), ThickLens(1.33, -10, -5, 10), Space(1), Lens(10), Space(15), Lens(5), Space(5)]
         lp = LaserCavity(elements)
         laserModes = lp.laserModes()
         beam = laserModes[0]
         self.assertEqual(len(laserModes), 1)
-        self.assertAlmostEqual(beam.q.real, -5.90770102)
-        self.assertAlmostEqual(beam.q.imag, 1.52036515)
+        self.assertAlmostEqual(beam.q.real, -1.6834742)
+        self.assertAlmostEqual(beam.q.imag, 7.424738506)
 
     def testLaserModesNoModeInfineElements(self):
         lp = LaserCavity([Space(10), CurvedMirror(5)])
@@ -101,6 +101,7 @@ class TestLaserCavity(envtest.RaytracingTestCase):
 
         self.assertIsNotNone(laser)
         self.assertTrue(len(laser.laserModes()) == 1)
+
 
 if __name__ == '__main__':
     envtest.main()
