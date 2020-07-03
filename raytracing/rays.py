@@ -636,7 +636,7 @@ class RandomRays(Rays):
 
     def __init__(self, yMax=1.0, yMin=None, thetaMax=pi / 2, thetaMin=None, maxCount=100000):
         if maxCount < 1:
-            ValueError("There must be at least a maximum count of 1 ray.")
+            raise ValueError("There must be at least a maximum count of 1 ray.")
 
         self.maxCount = maxCount
         self.yMax = yMax
