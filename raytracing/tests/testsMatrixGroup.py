@@ -40,6 +40,11 @@ class TestMatrixGroup(envtest.RaytracingTestCase):
         self.assertEqual(str(exception.exception),
                          "'elements' must be iterable (i.e. a list or a tuple of Matrix objects).")
 
+    def testTransferMatrixNegativeDistance(self):
+        mg = MatrixGroup()
+        with self.assertRaises(ValueError):
+            mg.transferMatrix(-10)
+
     def testTransferMatrixNoElements(self):
         mg = MatrixGroup()
         transferMat = mg.transferMatrix()

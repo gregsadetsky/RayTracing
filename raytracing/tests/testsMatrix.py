@@ -55,6 +55,16 @@ class TestMatrix(envtest.RaytracingTestCase):
         self.assertEqual(m.frontVertex, 0)
         self.assertEqual(m.apertureDiameter, 0.5)
 
+    def testMatrixProductMethodWithAnotherObj(self):
+        m = Matrix()
+        with self.assertRaises(TypeError):
+            m.mul_matrix(2)
+
+    def testMatrixProductMethodWithAnotherMatrix(self):
+        m = Matrix()
+        m2 = Matrix()
+        self.assertDoesNotRaise(m.mul_matrix, TypeError, m2)
+
     def testMatrixProductMath(self):
         m1 = Matrix(A=4, B=3, C=1, D=1)
         m2 = Matrix(A=1, B=1, C=3, D=4)
@@ -99,6 +109,16 @@ class TestMatrix(envtest.RaytracingTestCase):
         m3 = m2 * m1
         self.assertEqual(m3.frontIndex, 1)
         self.assertEqual(m3.backIndex, 1)
+
+    def testRayProductMethodWithAnotherObject(self):
+        m = Matrix()
+        with self.assertRaises(TypeError):
+            m.mul_ray("This is a Ray")
+
+    def testRayProductMethodWithAnotherRay(self):
+        m = Matrix()
+        r = Ray()
+        self.assertDoesNotRaise(m.mul_ray, TypeError, r)
 
     def testMatrixProductWithRayMath(self):
         m1 = Matrix(A=1, B=1, C=3, D=4)
@@ -201,6 +221,16 @@ class TestMatrix(envtest.RaytracingTestCase):
         self.assertEqual(m3.frontVertex, 2)
         self.assertEqual(m3.backVertex, 14)
 
+    def testGaussianProductWithAnotherObj(self):
+        m = Matrix()
+        with self.assertRaises(TypeError):
+            m.mul_beam(range(100))
+
+    def testGaussianProductWithAnotherBeam(self):
+        m = Matrix()
+        beam = GaussianBeam(w=1)
+        self.assertDoesNotRaise(m.mul_beam, TypeError, beam)
+
     def testMatrixProductGaussianBeamMath(self):
         m = Matrix(A=2, B=1, C=3, D=2)
         beamIn = GaussianBeam(w=1, wavelength=1)  # q = j*pi
@@ -267,6 +297,11 @@ class TestMatrix(envtest.RaytracingTestCase):
         self.assertFalse(m2.hasFiniteApertureDiameter())
         self.assertEqual(m2.largestDiameter, float("+inf"))
 
+    def testTransferMatrixUpToIsNegative(self):
+        m = Matrix()
+        with self.assertRaises(ValueError):
+            m.transferMatrix(-1e-10)
+
     def testTransferMatrix(self):
         m1 = Matrix(A=1, B=0, C=0, D=1)
         # Null length returns self
@@ -286,6 +321,19 @@ class TestMatrix(envtest.RaytracingTestCase):
     def testTransferMatrices(self):
         m1 = Matrix(A=1, B=0, C=0, D=2, frontIndex=2)
         self.assertEqual(m1.transferMatrices(), [m1])
+
+    def testTraceNotSupportedObj(self):
+        m = Matrix()
+        traceObj = Matrix()
+        with self.assertRaises(TypeError):
+            m.trace(traceObj)
+
+    def testTraceSupportedObj(self):
+        m = Matrix()
+        r = Ray()
+        beam = GaussianBeam(w=1)
+        self.assertDoesNotRaise(m.trace, TypeError, r)
+        self.assertDoesNotRaise(m.trace, TypeError, beam)
 
     def testTrace(self):
         ray = Ray(y=1, theta=1)
@@ -321,6 +369,12 @@ class TestMatrix(envtest.RaytracingTestCase):
         m = Matrix(A=1, B=0, C=0, D=1, apertureDiameter=10)
         trace = m.traceThrough(ray)
         self.assertEqual(trace, m * ray)
+
+    def testTraceManyNotIterable(self):
+        m = Matrix()
+        rays = Rays
+        with self.assertRaises(TypeError):
+            m.traceMany(rays)
 
     def testTraceMany(self):
         rays = [Ray(y, theta) for y, theta in zip(range(10, 20), range(10))]
@@ -371,10 +425,15 @@ class TestMatrix(envtest.RaytracingTestCase):
         # One less ray, because last is blocked
         self.assertEqual(len(traceManyThrough), len(rays) - 1)
 
+    def testTraceManyThroughInParallelNotIterable(self):
+        m = Matrix()
+        with self.assertRaises(TypeError):
+            m.traceManyThroughInParallel(Rays)
+
     @envtest.skipIf(sys.platform == 'darwin' and sys.version_info.major == 3 and sys.version_info.minor <= 7,
                     "Endless loop on macOS")
     # Some information here: https://github.com/gammapy/gammapy/issues/2453
-    def testTraceManyThroughInParallel(self):
+    def testTraceManyThroughInParallelProcessesIsNone(self):
         rays = [Ray(y, y) for y in range(5)]
         m = Matrix(physicalLength=1)
         trace = self.assertDoesNotRaise(m.traceManyThroughInParallel, None, rays)

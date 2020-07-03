@@ -148,7 +148,13 @@ class TestRays(envtest.RaytracingTestCase):
         rays = [Ray(0, 0)]
         rays = Rays(rays)
         rays.iteration = 1
-        self.assertEqual(rays.displayProgress, "")
+        self.assertPrints(rays.displayProgress, "")
+
+    def testRayCountHistogramMinAndMaxFlip(self):
+        rays = Rays([Ray(y) for y in range(5)])
+        count1 = rays.rayCountHistogram(None, 10, 2)
+        count2 = rays.rayCountHistogram(None, 2, 10)
+        self.assertTupleEqual(count1, count2)
 
     def testRayCountHistogramBinCountSpecified(self):
         r = [Ray(a, a) for a in range(6)]
@@ -168,6 +174,12 @@ class TestRays(envtest.RaytracingTestCase):
         for i in range(len(rayCountHist[0])):
             self.assertAlmostEqual(rayCountHist[0][i], comparison[0][i])
         self.assertListEqual(rayCountHist[1], comparison[1])
+
+    def testRayAnglesHistogramMinAndMaxFlip(self):
+        rays = Rays([Ray(y) for y in range(5)])
+        count1 = rays.rayAnglesHistogram(None, 10, 2)
+        count2 = rays.rayAnglesHistogram(None, 2, 10)
+        self.assertTupleEqual(count1, count2)
 
     def testRayAnglesHistogramBinCountSpecified(self):
         r = [Ray(a, a / 6) for a in range(6)]

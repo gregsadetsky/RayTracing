@@ -137,6 +137,11 @@ class TestSpaceMatrix(envtest.RaytracingTestCase):
         self.assertEqual(s.B, inf)
         self.assertEqual(s.L, inf)
 
+    def testTransferMatrixNegativeDistance(self):
+        s = Space(d=2)
+        with self.assertRaises(ValueError):
+            s.transferMatrix(-1)
+
     def testTransferMatrixInfiniteDistance(self):
         s = Space(inf)
         s = s.transferMatrix(2)
@@ -224,6 +229,9 @@ class TestDielectricInterface(envtest.RaytracingTestCase):
 
 
 class TestThickLens(envtest.RaytracingTestCase):
+    def testThickLensNegativeThickness(self):
+        with self.assertRaises(ValueError):
+            ThickLens(1, 1, 1, -1e-16)
 
     def testThickLensNullThicknessInfiniteDiameter(self):
         tl = ThickLens(1.33, 5, -5, 0)
@@ -315,6 +323,11 @@ class TestThickLens(envtest.RaytracingTestCase):
         self.assertEqual(m1.R1, m2.R1)
         self.assertEqual(m1.R2, m2.R2)
 
+    def testTransferMatrixNegativeDistance(self):
+        tl = ThickLens(1.2, 10, -5.67, 2)
+        with self.assertRaises(ValueError):
+            tl.transferMatrix(-inf)
+
     def testTransferMatrixWholeThickLens(self):
         tl = ThickLens(1.33, 10, -6, 1, 20)
         transMat = tl.transferMatrix()
@@ -343,6 +356,9 @@ class TestThickLens(envtest.RaytracingTestCase):
 
 
 class TestDielectricSlab(envtest.RaytracingTestCase):
+    def testDielectricSlabNegativeThickness(self):
+        with self.assertRaises(ValueError):
+            DielectricSlab(1, -1e-20)
 
     def testDielectricSlabInfiniteDiameter(self):
         ds = DielectricSlab(1.33, 2)
@@ -369,6 +385,11 @@ class TestDielectricSlab(envtest.RaytracingTestCase):
         self.assertEqual(ds.L, 2)
         self.assertEqual(ds.apertureDiameter, 22)
         self.assertEqual(ds.label, "Test")
+
+    def testTransferMatrixNegativeDistance(self):
+        slab = DielectricSlab(1, 19)
+        with self.assertRaises(ValueError):
+            slab.transferMatrix(-1)
 
     def testTransferMatrixWholeSlab(self):
         ds = DielectricSlab(1, 10)

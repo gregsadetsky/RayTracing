@@ -5,6 +5,14 @@ inf = float("+inf")
 
 
 class TestUniformRays(envtest.RaytracingTestCase):
+    def testRaysMIsSmallerThan1(self):
+        with self.assertRaises(ValueError):
+            UniformRays(1, -2, 1, -2, 0)
+
+    def testRaysNIsSmallerThan1(self):
+        with self.assertRaises(ValueError):
+            UniformRays(1, -1, 1, -1, 2, 0)
+
     def testRays(self):
         rays = UniformRays(1, -1, 1, -1, 10, 11)
         raysList = []
@@ -38,6 +46,18 @@ class TestUniformRays(envtest.RaytracingTestCase):
 
 class TestLambertianRays(envtest.RaytracingTestCase):
 
+    def testLambertianRaysMIsSmallerThan1(self):
+        with self.assertRaises(ValueError):
+            LambertianRays(1, -1, M=0)
+
+    def testLambertianRaysNIsSmallerThan1(self):
+        with self.assertRaises(ValueError):
+            LambertianRays(1, -1, N=0)
+
+    def testLambertianRaysIIsSmallerThan1(self):
+        with self.assertRaises(ValueError):
+            LambertianRays(1, -1, I=0)
+
     def testLambertianRays(self):
         rays = LambertianRays(1, -1, 10, 11, 12)
         raysList = []
@@ -70,6 +90,9 @@ class TestLambertianRays(envtest.RaytracingTestCase):
 
 
 class TestRandomRays(envtest.RaytracingTestCase):
+    def testRandomRaysMaxCountIsLessThan1(self):
+        with self.assertRaises(ValueError):
+            RandomRays(maxCount=0)
 
     def testRandomRays(self):
         rays = RandomRays()
@@ -92,6 +115,11 @@ class TestRandomRays(envtest.RaytracingTestCase):
         with self.assertRaises(StopIteration):
             next(rays)
 
+    def testRandomRaysGetSliceIndex(self):
+        rays = RandomRays(maxCount=10)
+        with self.assertRaises(TypeError):
+            rays[:]
+
     def testRandomRaysGetNotOutOfBound(self):
         rays = RandomRays()
         # Test purpose only:
@@ -100,7 +128,6 @@ class TestRandomRays(envtest.RaytracingTestCase):
         self.assertEqual(ray, Ray())
 
     def testRandomRaysGetWarnsWhenGeneratingRaysOnlyForLongTimes(self):
-
         class RandomRaysTest(RandomRays):
 
             def __init__(self, maxCount: int = 10_000):
@@ -115,7 +142,7 @@ class TestRandomRays(envtest.RaytracingTestCase):
                 return ray
 
         rays = RandomRaysTest(int(1e6))
-        
+
         with self.assertWarns(UserWarning):
             rays[3]
 
