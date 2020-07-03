@@ -81,7 +81,7 @@ class AchromatDoubletLens(MatrixGroup):
         self.R2 = R2
         self.R3 = R3
         if tc1 < 0:
-            raise ValueError("The first center thickness must be positive")
+            raise ValueError("The first center thickness must be positive.")
         self.tc1 = tc1
         if tc2 < 0:
             raise ValueError("The second center thickness must be positive.")
