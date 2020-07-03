@@ -27,6 +27,21 @@ class TestMatrix(envtest.RaytracingTestCase):
         with self.assertRaises(ValueError):
             Matrix(apertureDiameter=-0.1)
 
+    def testInvalidFrontIndex(self):
+        with self.assertRaises(ValueError):
+            Matrix(frontIndex=0.9999)
+
+    def testInvalidBackIndex(self):
+        with self.assertRaises(ValueError):
+            Matrix(backIndex=0.9999)
+
+    def testInconsistentDeterminant(self):
+        with self.assertRaises(ValueError):
+            Matrix(1, 2, 3, 4)
+
+    def testCloseEnoughDeterminant(self):
+        Matrix(A=(1 + 5 ** 0.5) / 2, D=1 / 1.6180339887)
+
     def testMatrixExplicit(self):
         m = Matrix(A=1, B=0, C=0, D=1, physicalLength=1,
                    frontVertex=0, backVertex=0, apertureDiameter=0.5)
