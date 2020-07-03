@@ -563,8 +563,6 @@ class Matrix(object):
         -----
         To use this function, the physicalLength of the system should be zero.
         """
-        if z < 0:
-            raise ValueError("The propagation length 'z' must be positive.")
 
         matrix = self.transferMatrix(upTo=z)
 
